@@ -26,10 +26,22 @@ rule_summary = (
 )
 
 # Sort rule candidates by most frequent connections
-rule_summary = rule_summary.sort_values("connection_count", ascending=False)
+rule_summary = rule_summary.sort_values(
+    "connection_count", ascending=False
+).reset_index(drop=True)
+
+# Add a suggested rule column
+rule_summary["suggested_rule"] = (
+    "ALLOW "
+    + rule_summary["source_ip"].astype(str)
+    + " TO "
+    + rule_summary["destination_ip"].astype(str)
+    + " ON PORT "
+    + rule_summary["destination_port"].astype(str)
+)
 
 
 # Print the final summary tables
-port_summary.to_excel("Firewall_Connections_Summary.xlsx")
-rule_summary.to_excel("Firewall_Rules_Summary.xlsx")
+port_summary.to_excel("Firewall_Connections_Summary.xlsx", index=False)
+rule_summary.to_excel("Firewall_Rules_Summary.xlsx", index=False)
 print("Excel File created in current directory")
