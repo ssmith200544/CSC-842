@@ -1,0 +1,146 @@
+# Firewall Analyzer Documentation
+
+## Problem Definition
+
+### What specific problem are you addressing?
+
+Firewall logs can contain many rows of raw connection data. Reviewing this data manually can make it difficult to quickly understand which systems are communicating, which destination ports are being used, and what traffic may need a firewall rule.
+
+This tool addresses that problem by reading firewall log data from a CSV file and creating summarized Excel reports.
+
+### Why is the problem important?
+
+Firewall rules are important for controlling network access. If rules are too broad, they may allow unnecessary or risky traffic. If rules are too restrictive, they may block legitimate traffic.
+
+A summarized view of firewall logs helps analysts make better decisions when reviewing traffic and planning firewall rules.
+
+### What existing tools or approaches exist?
+
+Existing approaches include:
+
+- Manual firewall log review
+- Excel filtering or pivot tables
+- Firewall management dashboards
+- SIEM tools such as Splunk or Elastic
+- Custom scripts
+
+These tools can be useful, but some are complex or require more setup than needed for a small analysis task.
+
+### What gap does your tool fill?
+
+This tool provides a lightweight and beginner-friendly way to analyze firewall logs. It does not replace a SIEM or firewall management platform, but it helps organize CSV log data into useful reports for basic firewall rule review.
+
+---
+
+## System Design
+
+### High-Level Architecture
+
+```text
+CSV Firewall Logs
+        ↓
+Python Script
+        ↓
+pandas DataFrame
+        ↓
+Traffic Summaries
+        ↓
+Excel Reports
+```
+
+The tool reads a CSV file named:
+
+```text
+firewall_practice_logs.csv
+```
+
+The CSV file must contain:
+
+```text
+source_ip
+source_port
+destination_ip
+destination_port
+```
+
+The script creates two Excel reports:
+
+```text
+Firewall_Connections_Summary.xlsx
+Firewall_Rules_Summary.xlsx
+```
+
+### Technology Choices and Justification
+
+**Python** was used because it is easy to read, widely used in cybersecurity, and useful for scripting and automation.
+
+**pandas** was used because it makes it simple to read CSV files, group data, count records, and create summaries.
+
+**Excel output** was used because spreadsheet reports are easy to review, filter, and share.
+
+---
+
+## Tool Functionality
+
+### Connection Summary
+
+The first report groups traffic by destination port.
+
+It shows:
+
+- Total connections per destination port
+- Number of unique source IPs
+- Source IPs associated with each port
+- Destination IPs associated with each port
+
+### Firewall Rule Summary
+
+The second report groups traffic by:
+
+```text
+source_ip → destination_ip → destination_port
+```
+
+It also creates a basic suggested rule, such as:
+
+```text
+ALLOW 172.16.4.20 TO 192.168.100.5 ON PORT 445
+```
+
+These are rule candidates only. They still require analyst review.
+
+---
+
+## Evaluation
+
+### How did you test the tool?
+
+The tool was tested using a practice firewall log CSV file. Testing included:
+
+- Confirming the CSV file loaded successfully
+- Confirming the required columns were read correctly
+- Verifying traffic was grouped by destination port
+- Verifying rule candidates were grouped by source IP, destination IP, and destination port
+- Confirming the Excel files were created successfully
+
+### Results
+
+The tool successfully created two Excel reports.
+
+The connection summary report showed destination port activity, connection counts, unique source IP counts, source IP lists, and destination IP lists.
+
+The firewall rules report showed source IP, destination IP, destination port, connection count, and a suggested allow rule.
+
+The output made the raw firewall log data easier to review and helped identify possible firewall rule candidates.
+
+### Known Issues
+
+Current known issues include:
+
+- The tool does not determine whether traffic is malicious
+- Suggested rules are not automatically safe to implement
+- The tool does not include TCP/UDP protocol information
+- The tool does not include timestamps
+- The tool does not compare traffic against existing firewall rules
+- The tool assumes the CSV file has the correct column names
+- The suggested rules are generic and not written for a specific firewall vendor
