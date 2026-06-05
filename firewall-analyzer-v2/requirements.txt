@@ -1,0 +1,13 @@
+# Core tool + GUI require NOTHING beyond the Python 3.8+ standard library.
+# (The GUI uses tkinter, which ships with Python on Windows/macOS. On Linux
+#  install it with:  sudo apt install python3-tk)
+#
+# The packages below are OPTIONAL and only needed for extra output formats:
+#   openpyxl   -> Excel  (--excel / "Save Excel" in the GUI)
+#   reportlab  -> PDF    (--pdf   / "Save PDF" in the GUI)
+#   matplotlib -> charts (--charts / "Save Charts" in the GUI)
+#
+# Install with:  python3 -m pip install -r requirements.txt
+openpyxl>=3.0
+reportlab>=3.6
+matplotlib>=3.4
